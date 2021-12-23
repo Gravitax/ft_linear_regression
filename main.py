@@ -1,41 +1,27 @@
-from sys import stderr, stdout
-import os
-
-keep = True
-
-
-# FAIS PAS LE OUF JAI JUSTE PRIS TON MAIN POUR LES GLOBALES A LA BASE
-
-# oui cest a toi que je parle geo ... :D
-
-while keep:
-    keep = False
+if __name__ == "__main__":
+    theta0, theta1 = 0., 0.
+    while 1:
+        try:
+            mileage = float(input("Enter a mileage: "))
+            if mileage < 0:
+                print("[[ Mileage can't be negative ]]")
+                continue
+            break
+        except ValueError:
+            print("[[ Invalid mileage ]]")
     try:
-        s = input("Enter a mileage (or q to quit)-> ")
-        if s == "q":
-            print("Goodbye !")
-            exit(0)
-        mileage = int(s)
-    except ValueError:
-        print("This is not a correct mileage !", file=stderr)
-        keep = True
-
-theta_0 = os.environ.get("THETA_ZERO", "Not Set")
-theta_1 = os.environ.get("THETA_ONE", "Not Set")
-
-which = "THETA_ZERO" if not theta_0 else "THETA_ONE"
-
-if not theta_0 or not theta_1:
-    print(which + " environnement variable not found !", file=stderr)
-    exit(1)
-
-try:
-    t0 = float(theta_0)
-    t1 = float(theta_1)
-except:
-    print("THETA_ZERO/THETA_ONE environnement variables content is not valid !", file=stderr)
-    exit(1)
-
-result = t0 + (t1 * mileage)
-
-print(str(result) + '€')
+        with open("theta", 'r') as f:
+            value = f.readlines()
+            theta0 = value[0][value[0].index('=') + 1:-1]
+            theta1 = value[1][value[1].index('=') + 1:-1]
+            try:
+                theta0 = float(theta0)
+                theta1 = float(theta1)
+            except ValueError:
+                print("[[ Error: invalid theta variables in theta file. Run training.py ]]")
+                theta0, theta1 = 0., 0.
+    except Exception:
+        print("[[ Error: no theta file. Run training.py ]]")
+    result = theta0 + (theta1 * mileage)
+    print("Estimated price:")
+    print(str(int(result)) + " €")
