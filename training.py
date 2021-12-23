@@ -4,11 +4,6 @@ from csv import reader
 from training_precision import evaluate_algorithm
 
 
-# Convert string column to float
-def	str_column_to_float(dataset, column):
-	for row in dataset:
-		row[column] = float(row[column].strip())
-
 # Load a CSV file
 def	load_csv(filename):
 	dataset = list()
@@ -18,12 +13,15 @@ def	load_csv(filename):
 			if not row:
 				continue
 			try:
+				# Convert string column to float
 				float(row[0])
+				i = 0
+				for elt in row:
+					row[i] = float(row[i])
+					i += 1
 			except ValueError:
 				continue
 			dataset.append(row)
-	for i in range(len(dataset[0])):
-		str_column_to_float(dataset, i)
 	return (dataset)
 
 # Calculate the mean value of a list of numbers
@@ -91,7 +89,7 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
 if __name__ == "__main__":
-	dataset = load_csv("dataset.csv")
+	dataset = load_csv("data.csv")
 	theta0, theta1 = coefficients(dataset)
 	save_in_file(theta0, theta1)
 
