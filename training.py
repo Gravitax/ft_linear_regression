@@ -12,9 +12,11 @@ def	load_csv(filename):
 		for row in csv_reader:
 			if not row:
 				continue
+			if not len(row[0]) or not len(row[1]):
+				print("[[ Error: invalid csv file ]]")
+				exit(1)
 			try:
 				# Convert string column to float
-				float(row[0])
 				i = 0
 				for elt in row:
 					row[i] = float(row[i])
@@ -61,14 +63,15 @@ def	coefficients(dataset):
 		renderGraph(theta0, theta1, x, y)
 	return ([theta0, theta1])
 
-def	save_in_file(theta0, theta1):
+def	save_in_file(theta0, theta1, rmse):
 	# saving theta0 and theta1 in a file
-	if theta0 and theta1:
+	if theta0 and theta1 and rmse:
 		print("theta0: " + str(theta0))
 		print("theta1: " + str(theta1))
+		print("rmse: " + str(rmse))
 		try:
 			theta = open("theta", 'w')
-			theta.write("theta0={}\ntheta1={}\n".format(theta0, theta1))
+			theta.write("theta0={}\ntheta1={}\nrmse={}\n".format(theta0, theta1, rmse))
 			theta.close()
 		except Exception:
 			print("[[ Error with theta file ]]")
@@ -89,14 +92,19 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
 if __name__ == "__main__":
+	if not ax:
+		print("[[ Error ]]")
+		exit(1)
 	dataset = load_csv("data.csv")
+	if len(dataset) < 2:
+		print("[[ Error: failed to load csv file ]]")
+		exit(1)
 	theta0, theta1 = coefficients(dataset)
-	save_in_file(theta0, theta1)
 
 	plt.ioff()
 	plt.show()
 
-	# A training dataset of 60% of the data is used to prepare the model and predictions are made on the remaining 40%.
-	split = 0.6
+	# A training dataset of 70% of the data is used to prepare the model and predictions are made on the remaining 30%.
+	split = 0.7
 	rmse = evaluate_algorithm(dataset, simple_linear_regression, split)
-	print("root mean squared error: %f" % (rmse))
+	save_in_file(theta0, theta1, rmse)
