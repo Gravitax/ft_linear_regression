@@ -36,8 +36,10 @@ if __name__ == "__main__":
 	theta0, theta1, rmse = get_thetas()
 	mileage = get_mileage()
 	result = theta0 + (theta1 * mileage)
-	precision = 100 - 100 * (rmse / result)
-	if precision < 0 or precision > 100:
-		precision = 0
+	precision = 0
+	if rmse and result:
+		precision = 100 - 100 * (rmse / result)
+		if precision < 0 or precision > 100:
+			precision = 0
 	print("Estimated price: " + str(int(result)) + " €")
 	print("Precision: " + str(int(precision)) + " %")
