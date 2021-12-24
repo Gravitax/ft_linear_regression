@@ -29,6 +29,6 @@ def evaluate_algorithm(dataset, algorithm, split):
 		row_copy = list(row)
 		row_copy[-1] = None
 		test_set.append(row_copy)
-	predicted = algorithm(train, test_set)
+	predicted, theta0, theta1 = algorithm(train, test_set)
 	actual = [row[-1] for row in test]
-	return (rmse_metric(actual, predicted))
+	return (theta0, theta1, rmse_metric(actual, predicted))

@@ -24,17 +24,32 @@ def	load_csv(filename):
 			except ValueError:
 				continue
 			dataset.append(row)
-	return (dataset)
+	return dataset
+
+def	save_in_file(theta0, theta1, rmse):
+	# saving theta0 and theta1 in a file
+	if theta0 and theta1 and rmse:
+		print("theta0: " + str(theta0))
+		print("theta1: " + str(theta1))
+		print("rmse: " + str(rmse))
+		try:
+			theta = open("theta", 'w')
+			theta.write("theta0={}\ntheta1={}\nrmse={}\n".format(theta0, theta1, rmse))
+			theta.close()
+		except Exception:
+			print("[[ Error with theta file ]]")
+	else:
+		print("[[ Error during training ]]")
 
 # Calculate the mean value of a list of numbers
 # mean(x) = sum(x) / count(x)
 def	mean(values):
-	return (sum(values) / float(len(values)))
+	return sum(values) / float(len(values))
 
 # Calculate the variance of a list of numbers
 # variance = sum( (x - mean(x))^2 )
 def	variance(values, mean):
-	return (sum([(x - mean) ** 2 for x in values]))
+	return sum([(x - mean) ** 2 for x in values])
 
 def	renderGraph(theta0, theta1, km, price):
 	ax.clear()
@@ -61,22 +76,7 @@ def	coefficients(dataset):
 		theta1 = covar / variance(x, mean_x)
 		theta0 = mean_y - theta1 * mean_x
 		renderGraph(theta0, theta1, x, y)
-	return ([theta0, theta1])
-
-def	save_in_file(theta0, theta1, rmse):
-	# saving theta0 and theta1 in a file
-	if theta0 and theta1 and rmse:
-		print("theta0: " + str(theta0))
-		print("theta1: " + str(theta1))
-		print("rmse: " + str(rmse))
-		try:
-			theta = open("theta", 'w')
-			theta.write("theta0={}\ntheta1={}\nrmse={}\n".format(theta0, theta1, rmse))
-			theta.close()
-		except Exception:
-			print("[[ Error with theta file ]]")
-	else:
-		print("[[ Error during training ]]")
+	return [theta0, theta1]
 
 # Simple linear regression algorithm
 def	simple_linear_regression(train, test):
@@ -85,7 +85,7 @@ def	simple_linear_regression(train, test):
 	for row in test:
 		yhat = theta0 + theta1 * row[0]
 		predictions.append(yhat)
-	return (predictions)
+	return predictions, theta0, theta1
 
 plt.ion()
 fig = plt.figure()
@@ -99,12 +99,8 @@ if __name__ == "__main__":
 	if len(dataset) < 2:
 		print("[[ Error: failed to load csv file ]]")
 		exit(1)
-	theta0, theta1 = coefficients(dataset)
-
+	# 70% of the data is used to prepare the model and predictions are made on the remaining 30%.
+	theta0, theta1, rmse = evaluate_algorithm(dataset, simple_linear_regression, 0.7)
+	save_in_file(theta0, theta1, rmse)
 	plt.ioff()
 	plt.show()
-
-	# A training dataset of 70% of the data is used to prepare the model and predictions are made on the remaining 30%.
-	split = 0.7
-	rmse = evaluate_algorithm(dataset, simple_linear_regression, split)
-	save_in_file(theta0, theta1, rmse)
