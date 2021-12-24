@@ -1,45 +1,10 @@
 import matplotlib.pyplot as plt
-from csv import reader
 
-from training_precision import evaluate_algorithm
+from math import sqrt
+from random import randrange
 
+from tools import load_csv, save_in_file
 
-# Load a CSV file
-def	load_csv(filename):
-	dataset = list()
-	with open(filename, 'r') as file:
-		csv_reader = reader(file)
-		for row in csv_reader:
-			if not row:
-				continue
-			if not len(row[0]) or not len(row[1]):
-				print("[[ Error: invalid csv file ]]")
-				exit(1)
-			try:
-				# Convert string column to float
-				i = 0
-				for elt in row:
-					row[i] = float(row[i])
-					i += 1
-			except ValueError:
-				continue
-			dataset.append(row)
-	return dataset
-
-def	save_in_file(theta0, theta1, rmse):
-	# saving theta0 and theta1 in a file
-	if theta0 and theta1 and rmse:
-		print("theta0: " + str(theta0))
-		print("theta1: " + str(theta1))
-		print("rmse: " + str(rmse))
-		try:
-			theta = open("theta", 'w')
-			theta.write("theta0={}\ntheta1={}\nrmse={}\n".format(theta0, theta1, rmse))
-			theta.close()
-		except Exception:
-			print("[[ Error with theta file ]]")
-	else:
-		print("[[ Error during training ]]")
 
 # Calculate the mean value of a list of numbers
 # mean(x) = sum(x) / count(x)
@@ -79,28 +44,39 @@ def	coefficients(dataset):
 	return [theta0, theta1]
 
 # Simple linear regression algorithm
-def	simple_linear_regression(train, test):
+def	simple_linear_regression(dataset):
 	predictions = list()
-	theta0, theta1 = coefficients(train)
-	for row in test:
+	theta0, theta1 = coefficients(dataset)
+	for row in dataset:
 		yhat = theta0 + theta1 * row[0]
 		predictions.append(yhat)
 	return predictions, theta0, theta1
+
+# Calculate root mean squared error
+def	rmse_metric(actual, predicted):
+	sum_error = 0.0
+	for i in range(len(actual)):
+		prediction_error = predicted[i] - actual[i]
+		sum_error += (prediction_error ** 2)
+	mean_error = sum_error / float(len(actual))
+	return (sqrt(mean_error))
+
+# Evaluate an algorithm
+def evaluate_algorithm(dataset, algorithm):
+	predicted, theta0, theta1 = algorithm(dataset)
+	actual = [row[1] for row in dataset]
+	return (theta0, theta1, rmse_metric(actual, predicted))
 
 plt.ion()
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 
 if __name__ == "__main__":
-	if not ax:
-		print("[[ Error ]]")
-		exit(1)
 	dataset = load_csv("data.csv")
 	if len(dataset) < 2:
 		print("[[ Error: failed to load csv file ]]")
 		exit(1)
-	# 70% of the data is used to prepare the model and predictions are made on the remaining 30%.
-	theta0, theta1, rmse = evaluate_algorithm(dataset, simple_linear_regression, 0.7)
-	save_in_file(theta0, theta1, rmse)
+	theta0, theta1, mean_error = evaluate_algorithm(dataset, simple_linear_regression)
+	save_in_file(theta0, theta1, mean_error)
 	plt.ioff()
 	plt.show()
