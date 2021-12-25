@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 from math import sqrt
-from random import randrange
 
 from tools import load_csv, save_in_file
 
