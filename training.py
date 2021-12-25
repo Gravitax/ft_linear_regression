@@ -6,6 +6,14 @@ from random import randrange
 from tools import load_csv, save_in_file
 
 
+def	renderGraph(theta0, theta1, km, price):
+	ax.clear()
+	ax.plot(km, price, 'o', color = "#000000")
+	lineX = [0, 260000]
+	lineY = [theta0 + (theta1 * 0), theta0 + (theta1 * 260000)]
+	ax.plot(lineX, lineY, color = "#ff0000")
+	plt.pause(0.001)
+
 # Calculate the mean value of a list of numbers
 # mean(x) = sum(x) / count(x)
 def	mean(values):
@@ -16,14 +24,6 @@ def	mean(values):
 def	variance(values, mean):
 	return sum([(x - mean) ** 2 for x in values])
 
-def	renderGraph(theta0, theta1, km, price):
-	ax.clear()
-	ax.plot(km, price, 'o', color = "#000000")
-	lineX = [0, 260000]
-	lineY = [theta0 + (theta1 * 0), theta0 + (theta1 * 260000)]
-	ax.plot(lineX, lineY, linestyle = "solid", color = "#ff0000", linewidth = 2.0)
-	plt.pause(0.001)
-
 # Calculate coefficients
 # THETA1 = sum((x(i) - mean(x)) * (y(i) - mean(y))) / sum( (x(i) - mean(x))^2 )
 # THETA1 = covariance(x, y) / variance(x)
@@ -31,14 +31,14 @@ def	renderGraph(theta0, theta1, km, price):
 def	coefficients(dataset):
 	x = [row[0] for row in dataset]
 	y = [row[1] for row in dataset]
-
+	mean_x, mean_y = mean(x), mean(y)
+	var = variance(x, mean_x)
 	# Calculate covariance between x and y
 	# covariance = sum((x(i) - mean(x)) * (y(i) - mean(y)))
-	mean_x, mean_y = mean(x), mean(y)
-	covar = 0.0
+	covariance = 0.0
 	for i in range(len(x)):
 		covar += (x[i] - mean_x) * (y[i] - mean_y)
-		theta1 = covar / variance(x, mean_x)
+		theta1 = covar / var
 		theta0 = mean_y - theta1 * mean_x
 		renderGraph(theta0, theta1, x, y)
 	return [theta0, theta1]
