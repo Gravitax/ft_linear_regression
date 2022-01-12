@@ -25,9 +25,10 @@ def	load_csv(filename):
 
 def	save_in_file(theta0, theta1, mean_error):
 	# saving theta0 and theta1 in a file
-	if theta0 and theta1 and mean_error:
+	if theta0 and theta1:
 		print("theta0: " + str(theta0))
 		print("theta1: " + str(theta1))
+		if not mean_error: mean_error = 0.0
 		print("mean_error: " + str(mean_error))
 		try:
 			theta = open("theta", 'w')

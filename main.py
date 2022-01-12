@@ -36,10 +36,9 @@ if __name__ == "__main__":
 	theta0, theta1, mean_error = get_thetas()
 	mileage = get_mileage()
 	result = theta0 + (theta1 * mileage)
-	precision = 0
+	print("Estimated price: " + str(int(result)) + " €")
 	if mean_error and result:
 		precision = 100 - 100 * (mean_error / result)
 		if precision < 0 or precision > 100: precision = 0
-	print("Estimated price: " + str(int(result)) + " €")
-	print("Mean error: " + str(int(mean_error)) + " €")
-	print("Precision: " + str(int(precision)) + " %")
+		print("Mean error: " + str(int(mean_error)) + " €")
+		print("Precision: " + str(int(precision)) + " %")
