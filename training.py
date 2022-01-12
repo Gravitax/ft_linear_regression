@@ -8,8 +8,8 @@ from tools import load_csv, save_in_file
 def	renderGraph(theta0, theta1, km, price):
 	ax.clear()
 	ax.plot(km, price, 'o', color = "#000000")
-	lineX = [0, 260000]
-	lineY = [theta0 + (theta1 * 0), theta0 + (theta1 * 260000)]
+	lineX = [0, 250000]
+	lineY = [theta0 + (theta1 * 0), theta0 + (theta1 * 250000)]
 	ax.plot(lineX, lineY, color = "#ff0000")
 	plt.pause(0.001)
 
@@ -34,7 +34,7 @@ def	coefficients(dataset):
 	var = variance(x, mean_x)
 	# Calculate covariance between x and y
 	# covariance = sum((x(i) - mean(x)) * (y(i) - mean(y)))
-	covariance = 0.0
+	covar = 0.0
 	for i in range(len(x)):
 		covar += (x[i] - mean_x) * (y[i] - mean_y)
 		theta1 = covar / var
