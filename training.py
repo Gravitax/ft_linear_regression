@@ -46,8 +46,8 @@ def gradient_descent(dataset, iterations):
 	for i in range(iterations):
 		tmp_t0 = sum_theta0(theta0, theta1, x, y, m) / m
 		tmp_t1 = sum_theta1(theta0, theta1, x, y, m) / m
-		theta0 = theta0 - learning_rate * tmp_t0
-		theta1 = theta1 - learning_rate * tmp_t1
+		theta0 -= learning_rate * tmp_t0
+		theta1 -= learning_rate * tmp_t1
 	return denormalize(theta0, min, max), theta1
 
 if __name__ == "__main__":
