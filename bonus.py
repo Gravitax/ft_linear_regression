@@ -5,9 +5,9 @@ from math import sqrt
 from tools import load_csv, save_in_file
 
 
-def	renderGraph(theta0, theta1, km, price):
+def	renderGraph(theta0, theta1, x, y):
 	ax.clear()
-	ax.plot(km, price, 'o', color = "#000000")
+	ax.plot(x, y, 'o', color = "#000000")
 	lineX = [0, 250000]
 	lineY = [theta0 + (theta1 * 0), theta0 + (theta1 * 250000)]
 	ax.plot(lineX, lineY, color = "#ff0000")
@@ -72,9 +72,6 @@ ax = fig.add_subplot(1, 1, 1)
 
 if __name__ == "__main__":
 	dataset = load_csv("data.csv")
-	if len(dataset) < 2:
-		print("[[ Error: failed to load csv file ]]")
-		exit(1)
 	theta0, theta1, mean_error = evaluate_algorithm(dataset, simple_linear_regression)
 	save_in_file(theta0, theta1, mean_error)
 	plt.ioff()

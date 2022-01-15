@@ -1,47 +1,36 @@
 from tools import load_csv, save_in_file
 
 
-learning_rate = 0.0001
+learning_rate = 0.01
 
-def estimator(t0, t1, mileages):
-    return t0 + (t1 * mileages)
+def hypothesis(theta0, theta1, mileages):
+    return theta0 + theta1 * mileages
 
-def sumTheta0(t0, t1, mileages, prices, length):
-    val = 0
-    for i in range(length):
-        val += estimator(t0, t1, mileages[i]) - prices[i]
-    return val
+def sum_theta0(theta0, theta1, mileages, prices, m):
+	value = 0.
+	for i in range(m):
+		value += hypothesis(theta0, theta1, mileages[i]) - prices[i]
+	return value
 
-def sumTheta1(t0, t1, mileages, prices, length):
-    val = 0
-    for i in range(length):
-        val += (estimator(t0, t1, mileages[i]) - prices[i]) * mileages[i]
-    return val
+def sum_theta1(theta0, theta1, mileages, prices, m):
+	value = 0.
+	for i in range(m):
+		value += (hypothesis(theta0, theta1, mileages[i]) - prices[i]) * mileages[i]
+	return value
 
-def trainer(mileages, prices):
-    t0, t1 = 0., 0.
-    length = len(mileages)
-    i = 0
-    while i < 10:
-        tmp0 = sumTheta0(t0, t1, mileages, prices, length) / length
-        tmp1 = sumTheta1(t0, t1, mileages, prices, length) / length
-        print(tmp0)
-        print(tmp1)
-        print("-----")
-        t0 -= (learning_rate * tmp0)
-        t1 -= (learning_rate * tmp1)
-        print(t0)
-        print(t1)
-        print("==========")
-        if abs(learning_rate * tmp0) < learning_rate:
-            break
-        i += 1
-    return t0, t1
+def gradient_descent(mileages, prices, i):
+	theta0, theta1 = 0., 0.
+	m = len(mileages)
+	for j in range(i):
+		tmp_t0 = sum_theta0(theta0, theta1, mileages, prices, m) / m
+		tmp_t1 = sum_theta1(theta0, theta1, mileages, prices, m) / m
+		theta0 = theta0 - learning_rate * tmp_t0
+		theta1 = theta1 - learning_rate * tmp_t1
+	return theta0 * 1000000, theta1
 
 if __name__ == "__main__":
-    dataset = load_csv("data.csv")
-    if len(dataset) < 2:
-        print("[[ Error: failed to load csv file ]]")
-        exit(1)
-    t0, t1 = trainer([row[0] for row in dataset], [row[1] for row in dataset])
-    save_in_file(t0, t1, 0.)
+	dataset = load_csv("data.csv")
+	mileages = [row[0] / 1000000 for row in dataset]
+	prices = [row[1] / 1000000 for row in dataset]
+	theta0, theta1 = gradient_descent(mileages, prices, 100000)
+	save_in_file(theta0, theta1, 0.)

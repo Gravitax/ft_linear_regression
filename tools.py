@@ -21,6 +21,9 @@ def	load_csv(filename):
 			except ValueError:
 				continue
 			dataset.append(row)
+	if len(dataset) < 2:
+		print("[[ Error: failed to load csv file ]]")
+		exit(1)
 	return dataset
 
 def	save_in_file(theta0, theta1, mean_error):
@@ -29,7 +32,7 @@ def	save_in_file(theta0, theta1, mean_error):
 		print("theta0: " + str(theta0))
 		print("theta1: " + str(theta1))
 		if not mean_error: mean_error = 0.0
-		print("mean_error: " + str(mean_error))
+		else: print("mean_error: " + str(mean_error))
 		try:
 			theta = open("theta", 'w')
 			theta.write("theta0={}\ntheta1={}\nmean_error={}\n".format(theta0, theta1, mean_error))
